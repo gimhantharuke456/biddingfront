@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Popconfirm, message } from "antd";
+import { Table, Button, Popconfirm, Select, message } from "antd";
 import axios from "axios";
 import CreateUpdateAuctionModal from "./CreateUpdateAuctionModal";
+
+const { Option } = Select;
 
 const Auctions = () => {
   const [auctions, setAuctions] = useState([]);
@@ -30,14 +32,9 @@ const Auctions = () => {
     setIsModalVisible(true);
   };
 
-  const handleEditClick = (auction) => {
-    setCurrentAuction(auction);
-    setIsModalVisible(true);
-  };
-
   const handleDeleteClick = async (auctionId) => {
     try {
-      await axios.delete(`/api/auctions/${auctionId}`);
+      await axios.delete(`http://localhost:8080/api/auctions/${auctionId}`);
       fetchAuctions();
       message.success("Auction deleted successfully");
     } catch (error) {
@@ -54,26 +51,75 @@ const Auctions = () => {
     fetchAuctions();
   };
 
+  const handleChangeStatus = async (auctionId, status) => {
+    try {
+      await axios.put(
+        `http://localhost:8080/api/auctions/${auctionId}/status`,
+        {
+          status,
+        }
+      );
+      message.success(`Auction status updated to ${status}`);
+      fetchAuctions();
+    } catch (error) {
+      message.error("Failed to update auction status");
+    }
+  };
+
   const columns = [
     {
       title: "Auction ID",
       dataIndex: "auctionId",
       key: "auctionId",
     },
-    // Add other column definitions here
+    {
+      title: "Item Name",
+      dataIndex: ["item", "name"],
+      key: "itemName",
+    },
+    {
+      title: "Start Time",
+      dataIndex: "startTime",
+      key: "startTime",
+    },
+    {
+      title: "End Time",
+      dataIndex: "endTime",
+      key: "endTime",
+    },
+    {
+      title: "Current Price",
+      dataIndex: "currentPrice",
+      key: "currentPrice",
+    },
+    // {
+    //   title: "Status",
+    //   dataIndex: "status",
+    //   key: "status",
+    //   render: (status, record) => (
+    //     <Select
+    //       defaultValue={status}
+    //       style={{ width: 120 }}
+    //       onChange={(value) => handleChangeStatus(record.auctionId, value)}
+    //     >
+    //       <Option value="active">Active</Option>
+    //       <Option value="completed">Completed</Option>
+    //       <Option value="cancelled">Cancelled</Option>
+    //     </Select>
+    //   ),
+    // },
     {
       title: "Actions",
       key: "actions",
       render: (text, record) => (
         <>
-          <Button onClick={() => handleEditClick(record)}>Edit</Button>
           <Popconfirm
             title="Are you sure to delete this auction?"
             onConfirm={() => handleDeleteClick(record.auctionId)}
             okText="Yes"
             cancelText="No"
           >
-            <Button type="danger">Delete</Button>
+            <Button danger>Delete</Button>
           </Popconfirm>
         </>
       ),
