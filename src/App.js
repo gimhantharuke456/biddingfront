@@ -1,24 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
-
+import "antd/dist/reset.css";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Login from "./Views/Login";
+import Signup from "./Views/Signup";
+import BidderDashboard from "./Views/BidderDashboard";
+import AuctioneerDashboard from "./Views/AuctioneerDashboard";
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/bidder" element={<BidderDashboard />} />
+        <Route path="/auctioneer" element={<AuctioneerDashboard />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
